@@ -17,7 +17,7 @@
 
 **Fara-7B** is Microsoft's first **agentic small language model (SLM)** designed specifically for computer use. With only 7 billion parameters, Fara-7B is an ultra-compact Computer Use Agent (CUA) that achieves state-of-the-art performance within its size class and is competitive with larger, more resource-intensive agentic systems.
 
-Try Fara-7B locally as follows (see [Installation](##Installation) for detailed instructions):
+Try Fara-7B locally as follows (see [Installation](##Installation) for detailed instructions) or via Magentic-UI:
 
 ```bash
 # 1. Clone repository
@@ -40,10 +40,41 @@ Then you can iterative query it with:
 fara-cli --task "whats the weather in new york now"
 ```
 
+To try Fara-7B inside Magentic-UI, please follow the instructions here [Magentic-UI + Fara-7B](https://github.com/microsoft/magentic-ui/blob/main/README.md#fara-7b). You will need to serve the model as before, but instead of fara-cli you can use Magentic-UI which has a nice UI.
+
+
 Notes:
 - If you're using Windows, we highly recommend using WSL2 (Windows Subsystem for Linux).
 - You might need to do `--tensor-parallel-size 2` with vllm command if you run out of memory
 
+<table>
+<tr>
+<td width="33%" align="center">
+
+**Shopping**  
+
+<video src="https://github.com/user-attachments/assets/d2109eba-a91f-4a0b-8217-38c1dcc17e9a" width="100%" style="max-height: 300px;">
+</video>
+
+</td>
+<td width="33%" align="center">
+
+**GitHub Issues**  
+
+<video src="https://github.com/user-attachments/assets/bb177a09-8fcb-41be-8639-32044c1ec0e8" width="100%" style="max-height: 300px;">
+</video>
+
+</td>
+<td width="33%" align="center">
+
+**Directions with Cheese**  
+
+<video src="https://github.com/user-attachments/assets/b83d341e-25f6-4236-a946-4b8eaca987d5" width="100%" style="max-height: 300px;">
+</video>
+
+</td>
+</tr>
+</table>
 
 ### What Makes Fara-7B Unique
 
