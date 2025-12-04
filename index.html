@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Générateur de formulaire aléatoire chaotique</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1000px;
+      margin: 20px auto;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+
+    h1 {
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+    }
+
+    .controls {
+      margin-bottom: 10px;
+    }
+
+    button {
+      padding: 8px 14px;
+      cursor: pointer;
+      border-radius: 4px;
+      border: 1px solid #999;
+      background: #f5f5f5;
+    }
+
+    /* Zone dans laquelle on balance les champs n'importe où */
+    #randomForm {
+      position: relative;
+      border: 1px dashed #aaa;
+      height: 600px; /* zone de jeu verticale */
+      margin-top: 15px;
+      overflow: auto;
+      background: #fafafa;
+    }
+
+    .field-group {
+      position: absolute; /* clé pour le chaos */
+      /* top / left / width seront définis en JS */
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    input, textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 4px;
+    }
+
+    .checkbox-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    input[type="checkbox"] {
+      width: auto;
+    }
+
+    .submit-wrapper {
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Générateur de formulaire aléatoire (chaotique)</h1>
+  <p>
+    Cliquez sur le bouton pour générer un formulaire aux champs disposés de manière aléatoire,
+    avec des tailles et polices aléatoires.
+  </p>
+
+  <div class="controls">
+    <button id="generateBtn">Générer un nouveau formulaire</button>
+  </div>
+
+  <form id="randomForm">
+    <!-- Les champs seront générés ici, en mode chaos -->
+  </form>
+
+  <div class="submit-wrapper">
+    <!-- On garde le bouton de submit à un endroit stable, en dehors de la zone chaotique -->
+    <button type="submit" form="randomForm">Envoyer le formulaire</button>
+  </div>
+
+  <script>
+    // Pas de select ici -> que des champs textuels/variantes
+    const fieldTypes = [
+      'text',
+      'email',
+      'number',
+      'date',
+      'checkbox',
+      'textarea',
+      'password'
+    ];
+
+    const labelParts1 = [
+      'Nom', 'Prénom', 'Adresse', 'Code', 'Ville', 'Pays',
+      'Email', 'Téléphone', 'Mot de passe', 'Commentaire',
+      'Société', 'Projet', 'Numéro', 'Date', 'Option'
+    ];
+
+    const labelParts2 = [
+      'client', 'utilisateur', 'principal', 'secondaire',
+      'facturation', 'livraison', 'contact', 'supplémentaire',
+      'test', 'exemple'
+    ];
+
+    function randomFromArray(arr) {
+      return arr[Math.floor(Math.random() * arr.length)];
+    }
+
+    function randomLabel() {
+      return randomFromArray(labelParts1) + ' ' + randomFromArray(labelParts2);
+    }
+
+    function randomName(index) {
+      return 'field_' + index + '_' +
+        Math.random().toString(36).substring(2, 7);
+    }
+
+    function createInputField(type, labelText, name, required) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'field-group';
+
+      // Taille de police aléatoire
+      const fontSize = 10 + Math.floor(Math.random() * 9); // 10 à 18px
+      wrapper.style.fontSize = fontSize + 'px';
+
+      if (type === 'checkbox') {
+        const label = document.createElement('label');
+        label.className = 'checkbox-label';
+
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        input.name = name;
+        input.id = name;
+        if (required) input.required = true;
+
+        const textNode = document.createTextNode(labelText + (required ? ' *' : ''));
+
+        label.appendChild(input);
+        label.appendChild(textNode);
+        wrapper.appendChild(label);
+        return wrapper;
+      }
+
+      const label = document.createElement('label');
+      label.htmlFor = name;
+      label.textContent = labelText + (required ? ' *' : '');
+      wrapper.appendChild(label);
+
+      if (type === 'textarea') {
+        const textarea = document.createElement('textarea');
+        textarea.name = name;
+        textarea.id = name;
+        textarea.rows = 2 + Math.floor(Math.random() * 4); // 2 à 5 lignes
+        if (required) textarea.required = true;
+        wrapper.appendChild(textarea);
+      } else {
+        const input = document.createElement('input');
+        input.type = type;
+        input.name = name;
+        input.id = name;
+        if (required) input.required = true;
+        wrapper.appendChild(input);
+      }
+
+      return wrapper;
+    }
+
+    function generateRandomForm() {
+      const form = document.getElementById('randomForm');
+      form.innerHTML = ''; // vider la zone de champs
+
+      const fieldCount = 5 + Math.floor(Math.random() * 10); // entre 5 et 14 champs
+
+      // Dimensions de la zone de jeu
+      const areaWidth = form.clientWidth || 800;
+      const areaHeight = form.clientHeight || 600;
+
+      for (let i = 0; i < fieldCount; i++) {
+        const type = randomFromArray(fieldTypes);
+        const labelText = randomLabel();
+        const name = randomName(i);
+        const required = Math.random() < 0.4; // ~40% requis
+
+        const field = createInputField(type, labelText, name, required);
+
+        // Largeur aléatoire du bloc
+        const minWidth = 120;
+        const maxWidth = 320;
+        const randomWidth = minWidth + Math.floor(Math.random() * (maxWidth - minWidth));
+        field.style.width = randomWidth + 'px';
+
+        // Position aléatoire dans la zone (avec petite marge)
+        const maxLeft = Math.max(0, areaWidth - randomWidth - 20);
+        const maxTop = Math.max(0, areaHeight - 80); // on suppose un bloc ≈ 80px de hauteur
+
+        const left = Math.floor(Math.random() * (maxLeft + 1));
+        const top = Math.floor(Math.random() * (maxTop + 1));
+
+        field.style.left = left + 'px';
+        field.style.top = top + 'px';
+
+        form.appendChild(field);
+      }
+    }
+
+    document.getElementById('generateBtn').addEventListener('click', function (e) {
+      e.preventDefault();
+      generateRandomForm();
+    });
+
+    // Générer un formulaire au chargement initial
+    generateRandomForm();
+  </script>
+</body>
+</html>
